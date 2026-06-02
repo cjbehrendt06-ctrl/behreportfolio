@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>carson behrendt</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f6f3;
+    --ink: #111111;
+    --mid: #888888;
+    --light: #cccccc;
+    --rule: #e0dedd;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 48px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--rule);
+  }
+  .nav-name {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 36px; }
+  .nav-links a {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--mid);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+
+  /* ── EDIT BUTTON ── */
+  .edit-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 150;
+    padding: 12px 20px;
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .edit-btn:hover { background: var(--mid); }
+  .edit-btn.active { background: #d4af37; color: var(--ink); }
+
+  /* ── EDITABLE ELEMENTS ── */
+  .editable {
+    position: relative;
+    outline: none;
+  }
+  .edit-mode .editable {
+    outline: 2px dashed var(--light);
+    outline-offset: 2px;
+    cursor: text;
+    background: rgba(212, 175, 55, 0.05);
+    padding: 4px;
+  }
+
+  /* ── PAGE WRAPPER ── */
+  main { padding-top: 57px; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: calc(100vh - 57px);
+    display: grid;
+    grid-template-columns: 72px 1fr 72px;
+    grid-template-rows: 1fr auto;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  /* vertical side labels */
+  .side-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid var(--rule);
+    padding: 24px 0;
+  }
+  .side-label span {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--mid);
+    text-transform: lowercase;
+  }
+  .side-label.right {
+    border-right: none;
+    border-left: 1px solid var(--rule);
+  }
+
+  .hero-body {
+    padding: 80px 72px 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: calc(100vh - 57px);
+  }
+
+  .hero-top { display: flex; flex-direction: column; gap: 0; }
+
+  .hero-index {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--mid);
+    margin-bottom: 48px;
+  }
+
+  h1 {
+    font-family: var(--mono);
+    font-size: clamp(52px, 8vw, 120px);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 0;
+  }
+  h1 .bracket { color: var(--light); font-weight: 300; }
+
+  .hero-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    border-top: 1px solid var(--rule);
+  }
+  .hero-stat {
+    padding: 28px 0;
+    border-right: 1px solid var(--rule);
+  }
+  .hero-stat:last-child { border-right: none; padding-left: 28px; }
+  .hero-stat:not(:first-child) { padding-left: 28px; }
+  .stat-val {
+    font-size: 32px;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .stat-key {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--mid);
+  }
+
+  /* ── SECTION SKELETON ── */
+  .section {
+    display: grid;
+    grid-template-columns: 72px 1fr 72px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .section-content {
+    padding: 72px;
+    border-left: 1px solid var(--rule);
+    border-right: 1px solid var(--rule);
+  }
+
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 64px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .section-title {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--mid);
+    text-transform: lowercase;
+  }
+  .section-num {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--light);
+  }
+
+  /* ── ABOUT ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 72px;
+  }
+  .about-statement {
+    font-size: clamp(20px, 2.5vw, 30px);
+    font-weight: 300;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .about-details { display: flex; flex-direction: column; gap: 28px; padding-top: 4px; }
+  .detail-row {}
+  .detail-key {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--mid);
+    margin-bottom: 5px;
+  }
+  .detail-val {
+    font-size: 12px;
+    color: var(--ink);
+    line-height: 1.7;
+  }
+
+  /* ── WORK / PROJECTS ── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .project-card {
+    background: var(--bg);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(100%);
+    transition: filter 0.4s ease;
+  }
+  .project-card:hover .project-img img { filter: grayscale(30%); }
+  .project-img .img-placeholder {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--light);
+    text-align: center;
+    line-height: 2;
+  }
+  .project-meta {
+    padding: 20px 24px 24px;
+    border-top: 1px solid var(--rule);
+  }
+  .project-title {
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .project-sub {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--mid);
+  }
+  /* vertical tag on project card */
+  .project-tag {
+    position: absolute;
+    right: 12px; bottom: 0; top: 0;
+    display: flex; align-items: flex-end; padding-bottom: 20px;
+  }
+  .project-tag span {
+    writing-mode: vertical-rl;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--light);
+  }
+
+  /* ── SKILLS ── */
+  .skills-table { width: 100%; border-collapse: collapse; }
+  .skills-table tr { border-bottom: 1px solid var(--rule); }
+  .skills-table tr:last-child { border-bottom: none; }
+  .skills-table td {
+    padding: 20px 0;
+    font-size: 12px;
+    vertical-align: top;
+  }
+  .skills-table td:first-child {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--mid);
+    width: 200px;
+    padding-right: 40px;
+  }
+  .skills-table td:last-child {
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+  .skill-items { display: flex; flex-wrap: wrap; gap: 8px 32px; }
+  .skill-item { font-size: 13px; font-weight: 300; }
+
+  /* ── EXPERIENCE ── */
+  .exp-list { display: flex; flex-direction: column; }
+  .exp-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 40px;
+    padding: 36px 0;
+    border-bottom: 1px solid var(--rule);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+  .exp-row.visible { opacity: 1; transform: none; }
+  .exp-row:last-child { border-bottom: none; }
+  .exp-date {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--mid);
+    padding-top: 3px;
+  }
+  .exp-company {
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    margin-bottom: 2px;
+  }
+  .exp-role {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--mid);
+    margin-bottom: 14px;
+  }
+  .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .exp-bullets li {
+    font-size: 11.5px;
+    color: var(--mid);
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.75;
+  }
+  .exp-bullets li::before {
+    content: '//';
+    position: absolute; left: 0;
+    color: var(--light);
+    font-size: 10px;
+  }
+
+  /* ── EDUCATION ── */
+  .edu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .edu-card {
+    background: var(--bg);
+    padding: 40px;
+  }
+  .edu-school { font-size: 15px; font-weight: 400; margin-bottom: 4px; }
+  .edu-period { font-size: 10px; letter-spacing: 0.15em; color: var(--mid); margin-bottom: 20px; }
+  .edu-line {
+    font-size: 11px;
+    color: var(--mid);
+    line-height: 1.9;
+  }
+  .edu-tag {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    border: 1px solid var(--light);
+    padding: 3px 10px;
+    margin-right: 6px;
+    margin-bottom: 4px;
+    color: var(--ink);
+  }
+
+  /* ── CONTACT ── */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 72px;
+  }
+  .contact-big {
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 32px;
+  }
+  .contact-note { font-size: 11px; color: var(--mid); line-height: 1.9; max-width: 320px; }
+  .contact-links { display: flex; flex-direction: column; }
+  .contact-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    transition: color 0.2s;
+  }
+  .contact-link:first-child { border-top: 1px solid var(--rule); }
+  .contact-link:hover { color: var(--mid); }
+  .link-arr { font-size: 14px; color: var(--light); transition: transform 0.2s; }
+  .contact-link:hover .link-arr { transform: translate(3px, -3px); }
+
+  /* ── FOOTER ── */
+  footer {
+    display: grid;
+    grid-template-columns: 72px 1fr 72px;
+    border-top: 1px solid var(--rule);
+  }
+  .footer-inner {
+    padding: 20px 72px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 1px solid var(--rule);
+    border-right: 1px solid var(--rule);
+  }
+  footer span {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--mid);
+  }
+
+  /* ── TYPING ANIMATION ── */
+  .typing::after {
+    content: '_';
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  /* ── FADE IN ── */
+  .fade {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .hero { grid-template-columns: 0 1fr 0; }
+    .side-label { display: none; }
+    .hero-body { padding: 48px 24px 40px; }
+    .section { grid-template-columns: 0 1fr 0; }
+    .section-content { padding: 48px 24px; border: none; }
+    .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+    .projects-grid, .edu-grid { grid-template-columns: 1fr; }
+    .exp-row { grid-template-columns: 1fr; gap: 6px; }
+    .footer-inner { padding: 20px 24px; border: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-name" href="#">[carson_behrendt]</a>
+  <div class="nav-links">
+    <a href="#about">about</a>
+    <a href="#work">work</a>
+    <a href="#experience">experience</a>
+    <a href="#education">education</a>
+    <a href="#contact">contact</a>
+  </div>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="side-label"><span>architecture · design · 2024–</span></div>
+    <div class="hero-body">
+      <div class="hero-top">
+        <p class="hero-index editable">portfolio_v1 / undergraduate / cincinnati</p>
+        <h1 id="heroName">
+          <span class="bracket">[</span>carson<br>behrendt<span class="bracket">]</span>
+        </h1>
+      </div>
+      <div class="hero-bottom">
+        <div class="hero-stat">
+          <span class="stat-val editable">3.6</span>
+          <span class="stat-key">// gpa_uc</span>
+        </div>
+        <div class="hero-stat">
+          <span class="stat-val editable">3×</span>
+          <span class="stat-key">// scholastics_keys</span>
+        </div>
+        <div class="hero-stat">
+          <span class="stat-val editable">B.S.</span>
+          <span class="stat-key">// architecture_daap</span>
+        </div>
+      </div>
+    </div>
+    <div class="side-label right"><span>uc · daap · class_of_2028</span></div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="section" id="about">
+    <div class="side-label"><span>01 / about</span></div>
+    <div class="section-content">
+      <div class="section-head">
+        <span class="section-title">// about</span>
+        <span class="section-num">01</span>
+      </div>
+      <div class="about-grid fade">
+        <p class="about-statement editable">architecture student at UC — designing with intention, building with precision, learning at the intersection of space, art, and construction.</p>
+        <div class="about-details">
+          <div class="detail-row">
+            <div class="detail-key">// name</div>
+            <div class="detail-val editable">Carson Behrendt</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-key">// location</div>
+            <div class="detail-val editable">812 Beechmeadow Lane<br>Cincinnati, Ohio</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-key">// email</div>
+            <div class="detail-val editable">behrencj@mail.uc.edu</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-key">// phone</div>
+            <div class="detail-val editable">(513) 413-4176</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-key">// portfolio</div>
+            <div class="detail-val editable">Carson_Behrendt</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-key">// status</div>
+            <div class="detail-val editable">honors student · seeking co-op</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="side-label right"><span></span></div>
+  </div>
+
+  <!-- WORK -->
+  <div class="section" id="work">
+    <div class="side-label"><span>02 / work</span></div>
+    <div class="section-content">
+      <div class="section-head">
+        <span class="section-title">// selected work</span>
+        <span class="section-num">02</span>
+      </div>
+      <div class="projects-grid">
+        <!-- card 1 -->
+        <div class="project-card fade">
+          <div class="project-img">
+            <div class="img-placeholder">[ image_01 ]<br>drop your photo here</div>
+            <div class="project-tag"><span>akt.1</span></div>
+          </div>
+          <div class="project-meta">
+            <div class="project-title editable">[project_01]</div>
+            <div class="project-sub editable">architectural design · 2025</div>
+          </div>
+        </div>
+        <!-- card 2 -->
+        <div class="project-card fade">
+          <div class="project-img">
+            <div class="img-placeholder">[ image_02 ]<br>drop your photo here</div>
+            <div class="project-tag"><span>akt.2</span></div>
+          </div>
+          <div class="project-meta">
+            <div class="project-title editable">[project_02]</div>
+            <div class="project-sub editable">construction docs · 2026</div>
+          </div>
+        </div>
+        <!-- card 3 -->
+        <div class="project-card fade">
+          <div class="project-img">
+            <div class="img-placeholder">[ image_03 ]<br>drop your photo here</div>
+            <div class="project-tag"><span>akt.3</span></div>
+          </div>
+          <div class="project-meta">
+            <div class="project-title editable">[project_03]</div>
+            <div class="project-sub editable">mixed media · 2024</div>
+          </div>
+        </div>
+        <!-- card 4 -->
+        <div class="project-card fade">
+          <div class="project-img">
+            <div class="img-placeholder">[ image_04 ]<br>drop your photo here</div>
+            <div class="project-tag"><span>akt.4</span></div>
+          </div>
+          <div class="project-meta">
+            <div class="project-title editable">[project_04]</div>
+            <div class="project-sub editable">sketching · 2D design · 2024</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="side-label right"><span></span></div>
+  </div>
+
+  <!-- SKILLS -->
+  <div class="section">
+    <div class="side-label"><span>03 / skills</span></div>
+    <div class="section-content">
+      <div class="section-head">
+        <span class="section-title">// skills &amp; tools</span>
+        <span class="section-num">03</span>
+      </div>
+      <table class="skills-table fade">
+        <tr>
+          <td>// software</td>
+          <td>
+            <div class="skill-items editable">
+              <span class="skill-item">Adobe Suite</span>
+              <span class="skill-item">Rhino</span>
+              <span class="skill-item">Revit</span>
+              <span class="skill-item">AutoCad</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>// craft</td>
+          <td>
+            <div class="skill-items editable">
+              <span class="skill-item">Sketching</span>
+              <span class="skill-item">2D Design</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>// approach</td>
+          <td>
+            <div class="skill-items editable">
+              <span class="skill-item">Critical Thinking</span>
+              <span class="skill-item">Collaborative</span>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="side-label right"><span></span></div>
+  </div>
+
+  <!-- EXPERIENCE -->
+  <div class="section" id="experience">
+    <div class="side-label"><span>04 / experience</span></div>
+    <div class="section-content">
+      <div class="section-head">
+        <span class="section-title">// professional experience</span>
+        <span class="section-num">04</span>
+      </div>
+      <div class="exp-list">
+        <div class="exp-row">
+          <div class="exp-date editable">spring_2026</div>
+          <div>
+            <div class="exp-company editable">Cincinnati United Contractors</div>
+            <div class="exp-role">// architecture co-op</div>
+            <ul class="exp-bullets">
+              <li class="editable">developed practical understanding of construction systems and documentation, adapting quickly to a professional environment and contributing to team coordination and project delivery</li>
+              <li class="editable">bridged architectural intent and construction execution by assisting with drawing analysis, on-site coordination, and team communication across active projects</li>
+            </ul>
+          </div>
+        </div>
+        <div class="exp-row">
+          <div class="exp-date editable">oct_2025 → now</div>
+          <div>
+            <div class="exp-company editable">Cooper's Hawk</div>
+            <div class="exp-role">// busser / runner</div>
+            <ul class="exp-bullets">
+              <li class="editable">provided efficient support in a high-volume, team-oriented environment, contributing to seamless service while building a close-knit team dynamic</li>
+            </ul>
+          </div>
+        </div>
+        <div class="exp-row">
+          <div class="exp-date editable">jun_2024 → aug_2024</div>
+          <div>
+            <div class="exp-company editable">Cutco Cutlery</div>
+            <div class="exp-role">// sales representative</div>
+            <ul class="exp-bullets">
+              <li class="editable">proper etiquette in communications and spreading ideas across a team while serving clients during individual product demonstrations</li>
+              <li class="editable">learned the fundamentals of sales strategy and client engagement</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="side-label right"><span></span></div>
+  </div>
+
+  <!-- EDUCATION -->
+  <div class="section" id="education">
+    <div class="side-label"><span>05 / education</span></div>
+    <div class="section-content">
+      <div class="section-head">
+        <span class="section-title">// education</span>
+        <span class="section-num">05</span>
+      </div>
+      <div class="edu-grid fade">
+        <div class="edu-card">
+          <div class="edu-school editable">University of Cincinnati</div>
+          <div class="edu-period editable">2024 → 2028</div>
+          <div class="edu-line editable">
+            B.S. Architecture<br>
+            College of Design, Architecture, Art &amp; Planning<br>
+            GPA: 3.6 · Honors Student
+          </div>
+        </div>
+        <div class="edu-card">
+          <div class="edu-school editable">Elder High School</div>
+          <div class="edu-period editable">graduated_2024</div>
+          <div class="edu-line editable">GPA: 3.8 · Honors Graduate</div>
+          <div>
+            <span class="edu-tag editable">[gold_key_2022]</span>
+            <span class="edu-tag editable">[gold_key_2024]</span>
+            <span class="edu-tag editable">[silver_key_2024]</span>
+            <span class="edu-tag editable">[silver_key_2024]</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="side-label right"><span></span></div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="section" id="contact">
+    <div class="side-label"><span>06 / contact</span></div>
+    <div class="section-content">
+      <div class="section-head">
+        <span class="section-title">// contact</span>
+        <span class="section-num">06</span>
+      </div>
+      <div class="contact-grid fade">
+        <div>
+          <p class="contact-big editable">let's<br>build.</p>
+          <p class="contact-note editable">whether you're looking for a co-op candidate, a collaborator, or just want to talk architecture — reach out.</p>
+        </div>
+        <div class="contact-links">
+          <a class="contact-link" href="mailto:behrencj@mail.uc.edu">
+            <span class="editable">behrencj@mail.uc.edu</span>
+            <span class="link-arr">↗</span>
+          </a>
+          <a class="contact-link" href="tel:5134134176">
+            <span class="editable">(513) 413-4176</span>
+            <span class="link-arr">↗</span>
+          </a>
+          <a class="contact-link" href="#">
+            <span class="editable">portfolio / Carson_Behrendt</span>
+            <span class="link-arr">↗</span>
+          </a>
+          <a class="contact-link" href="#">
+            <span class="editable">812 Beechmeadow Ln, Cincinnati OH</span>
+            <span class="link-arr">↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="side-label right"><span></span></div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div></div>
+  <div class="footer-inner">
+    <span class="editable">© 2026 carson_behrendt</span>
+    <span>architecture · daap · uc</span>
+    <span>class_of_2028</span>
+  </div>
+  <div></div>
+</footer>
+
+<button class="edit-btn" id="editBtn">edit mode</button>
+
+<script>
+  // Edit Mode Toggle
+  const editBtn = document.getElementById('editBtn');
+  const editables = document.querySelectorAll('.editable');
+  let isEditMode = false;
+
+  editBtn.addEventListener('click', () => {
+    isEditMode = !isEditMode;
+    document.body.classList.toggle('edit-mode');
+    editBtn.classList.toggle('active');
+    editBtn.textContent = isEditMode ? 'save & exit' : 'edit mode';
+
+    if (isEditMode) {
+      editables.forEach(el => {
+        el.contentEditable = 'true';
+        el.addEventListener('blur', saveData);
+      });
+    } else {
+      editables.forEach(el => {
+        el.contentEditable = 'false';
+        el.removeEventListener('blur', saveData);
+      });
+      saveToLocalStorage();
+    }
+  });
+
+  // Save to LocalStorage
+  function saveData(e) {
+    const id = e.target.getAttribute('data-id') || e.target.textContent;
+    localStorage.setItem(`portfolio_${id}`, e.target.innerHTML);
+  }
+
+  function saveToLocalStorage() {
+    editables.forEach((el, i) => {
+      localStorage.setItem(`portfolio_${i}`, el.innerHTML);
+    });
+  }
+
+  // Load from LocalStorage on Page Load
+  function loadFromLocalStorage() {
+    editables.forEach((el, i) => {
+      const saved = localStorage.getItem(`portfolio_${i}`);
+      if (saved) {
+        el.innerHTML = saved;
+      }
+    });
+  }
+
+  loadFromLocalStorage();
+
+  // Scroll observer
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 90);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade, .exp-row').forEach(el => observer.observe(el));
+
+  // Typing effect on hero name
+  const name = document.getElementById('heroName');
+  const full = name.innerHTML;
+  name.innerHTML = '<span class="bracket">[</span><span class="typing"></span>';
+  const typed = name.querySelector('.typing');
+  const text = 'carson\nbehrendt]';
+  let i = 0;
+  function type() {
+    if (i < text.length) {
+      if (text[i] === '\n') {
+        typed.innerHTML += '<br>';
+      } else {
+        typed.innerHTML += text[i];
+      }
+      i++;
+      setTimeout(type, i < 7 ? 80 : 60);
+    } else {
+      typed.classList.remove('typing');
+    }
+  }
+  setTimeout(type, 400);
+</script>
+</body>
+</html>
