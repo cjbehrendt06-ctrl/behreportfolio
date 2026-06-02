@@ -84,17 +84,28 @@
     padding: 4px;
   }
 
-  /* ── PHOTO UPLOAD ── */
+  /* ── PHOTO DROPBOX ── */
   .photo-upload-container {
     display: none;
     margin-top: 12px;
-    padding: 12px;
+    padding: 16px;
     background: rgba(212, 175, 55, 0.1);
-    border: 1px dashed var(--light);
+    border: 2px dashed var(--light);
     border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
   }
   .edit-mode .photo-upload-container {
     display: block;
+  }
+  .photo-upload-container:hover {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: var(--mid);
+  }
+  .photo-upload-container.dragover {
+    background: rgba(212, 175, 55, 0.2);
+    border-color: var(--ink);
   }
   .photo-upload-label {
     font-size: 10px;
@@ -104,13 +115,7 @@
     margin-bottom: 8px;
   }
   .photo-upload-input {
-    font-size: 10px;
-    padding: 6px;
-    width: 100%;
-    font-family: var(--mono);
-    border: 1px solid var(--rule);
-    background: var(--bg);
-    color: var(--ink);
+    display: none;
   }
 
   /* ── PAGE WRAPPER ── */
@@ -610,9 +615,9 @@
             <div class="img-placeholder" id="placeholder-1">[ image_01 ]<br>drop your photo here</div>
             <div class="project-tag"><span>akt.1</span></div>
           </div>
-          <div class="photo-upload-container">
-            <label class="photo-upload-label">Image URL:</label>
-            <input type="text" class="photo-upload-input" placeholder="https://example.com/image.jpg" data-project="1">
+          <div class="photo-upload-container" data-project="1">
+            <label class="photo-upload-label">drag & drop or click to upload image</label>
+            <input type="file" class="photo-upload-input" accept="image/*" data-project="1">
           </div>
           <div class="project-meta">
             <div class="project-title editable">[project_01]</div>
@@ -626,9 +631,9 @@
             <div class="img-placeholder" id="placeholder-2">[ image_02 ]<br>drop your photo here</div>
             <div class="project-tag"><span>akt.2</span></div>
           </div>
-          <div class="photo-upload-container">
-            <label class="photo-upload-label">Image URL:</label>
-            <input type="text" class="photo-upload-input" placeholder="https://example.com/image.jpg" data-project="2">
+          <div class="photo-upload-container" data-project="2">
+            <label class="photo-upload-label">drag & drop or click to upload image</label>
+            <input type="file" class="photo-upload-input" accept="image/*" data-project="2">
           </div>
           <div class="project-meta">
             <div class="project-title editable">[project_02]</div>
@@ -642,9 +647,9 @@
             <div class="img-placeholder" id="placeholder-3">[ image_03 ]<br>drop your photo here</div>
             <div class="project-tag"><span>akt.3</span></div>
           </div>
-          <div class="photo-upload-container">
-            <label class="photo-upload-label">Image URL:</label>
-            <input type="text" class="photo-upload-input" placeholder="https://example.com/image.jpg" data-project="3">
+          <div class="photo-upload-container" data-project="3">
+            <label class="photo-upload-label">drag & drop or click to upload image</label>
+            <input type="file" class="photo-upload-input" accept="image/*" data-project="3">
           </div>
           <div class="project-meta">
             <div class="project-title editable">[project_03]</div>
@@ -658,9 +663,9 @@
             <div class="img-placeholder" id="placeholder-4">[ image_04 ]<br>drop your photo here</div>
             <div class="project-tag"><span>akt.4</span></div>
           </div>
-          <div class="photo-upload-container">
-            <label class="photo-upload-label">Image URL:</label>
-            <input type="text" class="photo-upload-input" placeholder="https://example.com/image.jpg" data-project="4">
+          <div class="photo-upload-container" data-project="4">
+            <label class="photo-upload-label">drag & drop or click to upload image</label>
+            <input type="file" class="photo-upload-input" accept="image/*" data-project="4">
           </div>
           <div class="project-meta">
             <div class="project-title editable">[project_04]</div>
@@ -850,6 +855,7 @@
   // Edit Mode Toggle
   const editBtn = document.getElementById('editBtn');
   const editables = document.querySelectorAll('.editable');
+  const photoContainers = document.querySelectorAll('.photo-upload-container');
   const photoInputs = document.querySelectorAll('.photo-upload-input');
   let isEditMode = false;
 
@@ -873,30 +879,58 @@
     }
   });
 
-  // Photo Upload Handler
-  photoInputs.forEach(input => {
-    input.addEventListener('change', handlePhotoUpload);
-    input.addEventListener('blur', handlePhotoUpload);
+  // Photo Upload Handlers
+  photoContainers.forEach(container => {
+    const input = container.querySelector('.photo-upload-input');
+
+    // Click to upload
+    container.addEventListener('click', () => input.click());
+
+    // File input change
+    input.addEventListener('change', handleFileUpload);
+
+    // Drag and drop
+    container.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      container.classList.add('dragover');
+    });
+
+    container.addEventListener('dragleave', () => {
+      container.classList.remove('dragover');
+    });
+
+    container.addEventListener('drop', (e) => {
+      e.preventDefault();
+      container.classList.remove('dragover');
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        input.files = files;
+        handleFileUpload({ target: input });
+      }
+    });
   });
 
-  function handlePhotoUpload(e) {
-    const projectNum = e.target.getAttribute('data-project');
-    const url = e.target.value;
-    
-    if (url) {
-      const img = document.getElementById(`project-img-${projectNum}`);
-      const placeholder = document.getElementById(`placeholder-${projectNum}`);
-      
-      img.src = url;
-      img.onload = () => {
+  function handleFileUpload(e) {
+    const input = e.target;
+    const projectNum = input.getAttribute('data-project');
+    const file = input.files[0];
+
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const imgData = event.target.result;
+        const img = document.getElementById(`project-img-${projectNum}`);
+        const placeholder = document.getElementById(`placeholder-${projectNum}`);
+
+        img.src = imgData;
         img.style.display = 'block';
         placeholder.style.display = 'none';
-        localStorage.setItem(`portfolio_image_${projectNum}`, url);
+
+        localStorage.setItem(`portfolio_image_${projectNum}`, imgData);
       };
-      img.onerror = () => {
-        alert('Image URL is not valid. Please check the link.');
-        e.target.value = '';
-      };
+      reader.readAsDataURL(file);
+    } else {
+      alert('Please upload a valid image file.');
     }
   }
 
@@ -923,16 +957,14 @@
 
     // Load project images
     for (let i = 1; i <= 4; i++) {
-      const savedUrl = localStorage.getItem(`portfolio_image_${i}`);
-      if (savedUrl) {
+      const savedImgData = localStorage.getItem(`portfolio_image_${i}`);
+      if (savedImgData) {
         const img = document.getElementById(`project-img-${i}`);
         const placeholder = document.getElementById(`placeholder-${i}`);
-        const input = document.querySelector(`[data-project="${i}"]`);
-        
-        img.src = savedUrl;
+
+        img.src = savedImgData;
         img.style.display = 'block';
         placeholder.style.display = 'none';
-        input.value = savedUrl;
       }
     }
   }
