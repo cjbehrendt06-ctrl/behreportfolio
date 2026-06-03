@@ -28,6 +28,75 @@
     overflow-x: hidden;
   }
 
+  /* ── LOGIN MODAL ── */
+  .login-modal {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+  }
+  .login-modal.hidden {
+    display: none;
+  }
+  .login-box {
+    background: var(--bg);
+    padding: 40px;
+    border: 1px solid var(--rule);
+    max-width: 300px;
+    width: 90%;
+  }
+  .login-title {
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    margin-bottom: 24px;
+    color: var(--ink);
+  }
+  .login-field {
+    margin-bottom: 16px;
+  }
+  .login-label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--mid);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .login-input {
+    width: 100%;
+    padding: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    border: 1px solid var(--rule);
+    background: var(--bg);
+    color: var(--ink);
+  }
+  .login-btn {
+    width: 100%;
+    padding: 10px;
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    margin-top: 16px;
+  }
+  .login-btn:hover {
+    background: var(--mid);
+  }
+  .login-error {
+    font-size: 10px;
+    color: #d32f2f;
+    margin-top: 8px;
+  }
+
   /* ── NAV ── */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 200;
@@ -67,7 +136,9 @@
     letter-spacing: 0.1em;
     cursor: pointer;
     transition: background 0.2s;
+    display: none;
   }
+  .edit-btn.show { display: block; }
   .edit-btn:hover { background: var(--mid); }
   .edit-btn.active { background: #d4af37; color: var(--ink); }
 
@@ -116,6 +187,34 @@
   }
   .photo-upload-input {
     display: none;
+  }
+
+  /* ── PHOTO SHAPE CONTROLS ── */
+  .photo-shape-controls {
+    display: none;
+    margin-top: 12px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .edit-mode .photo-shape-controls {
+    display: flex;
+  }
+  .shape-btn {
+    padding: 8px 12px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    border: 1px solid var(--rule);
+    background: var(--bg);
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .shape-btn:hover {
+    border-color: var(--mid);
+  }
+  .shape-btn.active {
+    background: var(--ink);
+    color: var(--bg);
   }
 
   /* ── PAGE WRAPPER ── */
@@ -500,6 +599,14 @@
   }
   .fade.visible { opacity: 1; transform: none; }
 
+  /* ── IMAGE SHAPE CLASSES ── */
+  .img-square {
+    aspect-ratio: 1 !important;
+  }
+  .img-rectangle {
+    aspect-ratio: 4/3 !important;
+  }
+
   @media (max-width: 900px) {
     nav { padding: 16px 24px; }
     .hero { grid-template-columns: 0 1fr 0; }
@@ -515,6 +622,23 @@
 </style>
 </head>
 <body>
+
+<!-- LOGIN MODAL -->
+<div class="login-modal" id="loginModal">
+  <div class="login-box">
+    <div class="login-title">portfolio access</div>
+    <div class="login-field">
+      <label class="login-label">email</label>
+      <input type="email" class="login-input" id="loginEmail" placeholder="behrencj@mail.uc.edu">
+    </div>
+    <div class="login-field">
+      <label class="login-label">password</label>
+      <input type="password" class="login-input" id="loginPassword" placeholder="••••••••">
+    </div>
+    <button class="login-btn" id="loginBtn">sign in</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
 
 <!-- NAV -->
 <nav>
@@ -610,7 +734,7 @@
       <div class="projects-grid">
         <!-- card 1 -->
         <div class="project-card fade">
-          <div class="project-img">
+          <div class="project-img" id="project-img-container-1">
             <img id="project-img-1" src="" alt="project 1" style="display:none;" />
             <div class="img-placeholder" id="placeholder-1">[ image_01 ]<br>drop your photo here</div>
             <div class="project-tag"><span>akt.1</span></div>
@@ -619,6 +743,10 @@
             <label class="photo-upload-label">drag & drop or click to upload image</label>
             <input type="file" class="photo-upload-input" accept="image/*" data-project="1">
           </div>
+          <div class="photo-shape-controls" data-project="1">
+            <button class="shape-btn active" data-shape="rectangle" data-project="1">rectangle</button>
+            <button class="shape-btn" data-shape="square" data-project="1">square</button>
+          </div>
           <div class="project-meta">
             <div class="project-title editable">[project_01]</div>
             <div class="project-sub editable">architectural design · 2025</div>
@@ -626,7 +754,7 @@
         </div>
         <!-- card 2 -->
         <div class="project-card fade">
-          <div class="project-img">
+          <div class="project-img" id="project-img-container-2">
             <img id="project-img-2" src="" alt="project 2" style="display:none;" />
             <div class="img-placeholder" id="placeholder-2">[ image_02 ]<br>drop your photo here</div>
             <div class="project-tag"><span>akt.2</span></div>
@@ -635,6 +763,10 @@
             <label class="photo-upload-label">drag & drop or click to upload image</label>
             <input type="file" class="photo-upload-input" accept="image/*" data-project="2">
           </div>
+          <div class="photo-shape-controls" data-project="2">
+            <button class="shape-btn active" data-shape="rectangle" data-project="2">rectangle</button>
+            <button class="shape-btn" data-shape="square" data-project="2">square</button>
+          </div>
           <div class="project-meta">
             <div class="project-title editable">[project_02]</div>
             <div class="project-sub editable">construction docs · 2026</div>
@@ -642,7 +774,7 @@
         </div>
         <!-- card 3 -->
         <div class="project-card fade">
-          <div class="project-img">
+          <div class="project-img" id="project-img-container-3">
             <img id="project-img-3" src="" alt="project 3" style="display:none;" />
             <div class="img-placeholder" id="placeholder-3">[ image_03 ]<br>drop your photo here</div>
             <div class="project-tag"><span>akt.3</span></div>
@@ -651,6 +783,10 @@
             <label class="photo-upload-label">drag & drop or click to upload image</label>
             <input type="file" class="photo-upload-input" accept="image/*" data-project="3">
           </div>
+          <div class="photo-shape-controls" data-project="3">
+            <button class="shape-btn active" data-shape="rectangle" data-project="3">rectangle</button>
+            <button class="shape-btn" data-shape="square" data-project="3">square</button>
+          </div>
           <div class="project-meta">
             <div class="project-title editable">[project_03]</div>
             <div class="project-sub editable">mixed media · 2024</div>
@@ -658,7 +794,7 @@
         </div>
         <!-- card 4 -->
         <div class="project-card fade">
-          <div class="project-img">
+          <div class="project-img" id="project-img-container-4">
             <img id="project-img-4" src="" alt="project 4" style="display:none;" />
             <div class="img-placeholder" id="placeholder-4">[ image_04 ]<br>drop your photo here</div>
             <div class="project-tag"><span>akt.4</span></div>
@@ -666,6 +802,10 @@
           <div class="photo-upload-container" data-project="4">
             <label class="photo-upload-label">drag & drop or click to upload image</label>
             <input type="file" class="photo-upload-input" accept="image/*" data-project="4">
+          </div>
+          <div class="photo-shape-controls" data-project="4">
+            <button class="shape-btn active" data-shape="rectangle" data-project="4">rectangle</button>
+            <button class="shape-btn" data-shape="square" data-project="4">square</button>
           </div>
           <div class="project-meta">
             <div class="project-title editable">[project_04]</div>
@@ -852,11 +992,58 @@
 <button class="edit-btn" id="editBtn">edit mode</button>
 
 <script>
+  // Credentials
+  const VALID_EMAIL = 'behrencj@mail.uc.edu';
+  const VALID_PASSWORD = 'behr$$2020port';
+
+  // Login System
+  const loginModal = document.getElementById('loginModal');
+  const loginBtn = document.getElementById('loginBtn');
+  const loginEmail = document.getElementById('loginEmail');
+  const loginPassword = document.getElementById('loginPassword');
+  const loginError = document.getElementById('loginError');
+
+  loginBtn.addEventListener('click', () => {
+    const email = loginEmail.value.trim();
+    const password = loginPassword.value;
+
+    if (email === VALID_EMAIL && password === VALID_PASSWORD) {
+      localStorage.setItem('portfolio_authenticated', 'true');
+      loginModal.classList.add('hidden');
+      showEditBtn();
+    } else {
+      loginError.textContent = 'Invalid email or password';
+    }
+  });
+
+  // Allow login with Enter key
+  loginPassword.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') loginBtn.click();
+  });
+  loginEmail.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') loginBtn.click();
+  });
+
+  // Check authentication on page load
+  function checkAuthentication() {
+    if (localStorage.getItem('portfolio_authenticated') === 'true') {
+      loginModal.classList.add('hidden');
+      showEditBtn();
+    }
+  }
+
+  function showEditBtn() {
+    document.getElementById('editBtn').classList.add('show');
+  }
+
+  checkAuthentication();
+
   // Edit Mode Toggle
   const editBtn = document.getElementById('editBtn');
   const editables = document.querySelectorAll('.editable');
   const photoContainers = document.querySelectorAll('.photo-upload-container');
   const photoInputs = document.querySelectorAll('.photo-upload-input');
+  const shapeButtons = document.querySelectorAll('.shape-btn');
   let isEditMode = false;
 
   editBtn.addEventListener('click', () => {
@@ -934,6 +1121,33 @@
     }
   }
 
+  // Shape Controls
+  shapeButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const projectNum = e.target.getAttribute('data-project');
+      const shape = e.target.getAttribute('data-shape');
+      const controlsContainer = document.querySelector(`.photo-shape-controls[data-project="${projectNum}"]`);
+      const imgContainer = document.getElementById(`project-img-container-${projectNum}`);
+
+      // Remove all active classes
+      controlsContainer.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('active'));
+      
+      // Add active class to clicked button
+      e.target.classList.add('active');
+
+      // Update image shape
+      imgContainer.classList.remove('img-square', 'img-rectangle');
+      if (shape === 'square') {
+        imgContainer.classList.add('img-square');
+      } else {
+        imgContainer.classList.add('img-rectangle');
+      }
+
+      // Save preference
+      localStorage.setItem(`portfolio_shape_${projectNum}`, shape);
+    });
+  });
+
   // Save to LocalStorage
   function saveData(e) {
     const id = e.target.getAttribute('data-id') || e.target.textContent;
@@ -955,7 +1169,7 @@
       }
     });
 
-    // Load project images
+    // Load project images and shapes
     for (let i = 1; i <= 4; i++) {
       const savedImgData = localStorage.getItem(`portfolio_image_${i}`);
       if (savedImgData) {
@@ -965,6 +1179,22 @@
         img.src = savedImgData;
         img.style.display = 'block';
         placeholder.style.display = 'none';
+      }
+
+      // Load saved shape
+      const savedShape = localStorage.getItem(`portfolio_shape_${i}`) || 'rectangle';
+      const imgContainer = document.getElementById(`project-img-container-${i}`);
+      const controlsContainer = document.querySelector(`.photo-shape-controls[data-project="${i}"]`);
+      
+      imgContainer.classList.remove('img-square', 'img-rectangle');
+      controlsContainer.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('active'));
+      
+      if (savedShape === 'square') {
+        imgContainer.classList.add('img-square');
+        controlsContainer.querySelector('[data-shape="square"]').classList.add('active');
+      } else {
+        imgContainer.classList.add('img-rectangle');
+        controlsContainer.querySelector('[data-shape="rectangle"]').classList.add('active');
       }
     }
   }
