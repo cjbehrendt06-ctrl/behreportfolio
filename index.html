@@ -148,9 +148,8 @@
     letter-spacing: 0.1em;
     cursor: pointer;
     transition: background 0.2s;
-    display: none;
+    display: block;
   }
-  .edit-btn.show { display: block; }
   .edit-btn:hover { background: var(--mid); }
   .edit-btn.active { background: #d4af37; color: var(--ink); }
 
@@ -616,7 +615,7 @@
 <body>
 
 <!-- LOGIN MODAL -->
-<div class="login-modal" id="loginModal">
+<div class="login-modal hidden" id="loginModal">
   <div class="login-box">
     <div class="login-title">owner login</div>
     <div class="login-field">
@@ -817,13 +816,10 @@
   }
   
   function showEditControls() {
-    document.getElementById('editBtn').classList.add('show');
     document.getElementById('logoutBtn').classList.add('show');
-    document.getElementById('loginModal').classList.add('hidden');
   }
   
   function hideEditControls() {
-    document.getElementById('editBtn').classList.remove('show');
     document.getElementById('logoutBtn').classList.remove('show');
   }
   
@@ -838,6 +834,9 @@
       localStorage.setItem('portfolioToken', 'owner_authenticated');
       errorEl.textContent = '';
       showEditControls();
+      document.getElementById('loginModal').classList.add('hidden');
+      enableEditMode();
+      document.getElementById('editBtn').classList.add('active');
     } else {
       errorEl.textContent = 'invalid credentials';
       document.getElementById('loginPassword').value = '';
@@ -851,6 +850,7 @@
     document.getElementById('editBtn').classList.remove('active');
     document.body.classList.remove('edit-mode');
     hideEditControls();
+    disableEditMode();
   });
   
   // Allow Enter key to submit login
