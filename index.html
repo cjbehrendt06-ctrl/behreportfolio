@@ -111,7 +111,7 @@
     color: var(--ink);
     text-decoration: none;
   }
-  .nav-links { display: flex; gap: 36px; }
+  .nav-links { display: flex; gap: 36px; align-items: center; }
   .nav-links a {
     font-size: 11px;
     letter-spacing: 0.1em;
@@ -120,6 +120,18 @@
     transition: color 0.2s;
   }
   .nav-links a:hover { color: var(--ink); }
+  .logout-btn {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--mid);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+    display: none;
+  }
+  .logout-btn.show { display: block; }
+  .logout-btn:hover { color: var(--ink); }
 
   /* ── EDIT BUTTON ── */
   .edit-btn {
@@ -187,6 +199,57 @@
   }
   .photo-upload-input {
     display: none;
+  }
+
+  /* ── PHOTO SIZE CONTROLS ── */
+  .photo-size-controls {
+    display: none;
+    margin-top: 12px;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .edit-mode .photo-size-controls {
+    display: flex;
+  }
+  .size-label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--mid);
+  }
+  .size-slider {
+    flex: 1;
+    min-width: 150px;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--rule);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .size-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--ink);
+    cursor: pointer;
+  }
+  .size-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--ink);
+    cursor: pointer;
+    border: none;
+  }
+  .size-value {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ink);
+    min-width: 40px;
+    text-align: center;
   }
 
   /* ── PHOTO SHAPE CONTROLS ── */
@@ -498,38 +561,6 @@
     content: '//';
     position: absolute; left: 0;
     color: var(--light);
-    font-size: 10px;
-  }
-
-  /* ── EDUCATION ── */
-  .edu-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1px;
-    background: var(--rule);
-    border: 1px solid var(--rule);
-  }
-  .edu-card {
-    background: var(--bg);
-    padding: 40px;
-  }
-  .edu-school { font-size: 15px; font-weight: 400; margin-bottom: 4px; }
-  .edu-period { font-size: 10px; letter-spacing: 0.15em; color: var(--mid); margin-bottom: 20px; }
-  .edu-line {
-    font-size: 11px;
-    color: var(--mid);
-    line-height: 1.9;
-  }
-  .edu-tag {
-    display: inline-block;
-    margin-top: 12px;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    border: 1px solid var(--light);
-    padding: 3px 10px;
-    margin-right: 6px;
-    margin-bottom: 4px;
-    color: var(--ink);
   }
 
   /* ── CONTACT ── */
@@ -538,86 +569,47 @@
     grid-template-columns: 1fr 1fr;
     gap: 72px;
   }
-  .contact-big {
-    font-size: clamp(36px, 5vw, 64px);
-    font-weight: 300;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    margin-bottom: 32px;
-  }
-  .contact-note { font-size: 11px; color: var(--mid); line-height: 1.9; max-width: 320px; }
-  .contact-links { display: flex; flex-direction: column; }
-  .contact-link {
+  .contact-row {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 0;
-    border-bottom: 1px solid var(--rule);
-    text-decoration: none;
-    color: var(--ink);
-    font-size: 12px;
-    letter-spacing: 0.06em;
-    transition: color 0.2s;
+    flex-direction: column;
+    gap: 8px;
   }
-  .contact-link:first-child { border-top: 1px solid var(--rule); }
-  .contact-link:hover { color: var(--mid); }
-  .link-arr { font-size: 14px; color: var(--light); transition: transform 0.2s; }
-  .contact-link:hover .link-arr { transform: translate(3px, -3px); }
-
-  /* ── FOOTER ── */
-  footer {
-    display: grid;
-    grid-template-columns: 72px 1fr 72px;
-    border-top: 1px solid var(--rule);
-  }
-  .footer-inner {
-    padding: 20px 72px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-left: 1px solid var(--rule);
-    border-right: 1px solid var(--rule);
-  }
-  footer span {
+  .contact-label {
     font-size: 10px;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.18em;
     color: var(--mid);
   }
-
-  /* ── TYPING ANIMATION ── */
-  .typing::after {
-    content: '_';
-    animation: blink 1s step-end infinite;
+  .contact-val {
+    font-size: 13px;
+    color: var(--ink);
   }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-
-  /* ── FADE IN ── */
-  .fade {
-    opacity: 0;
-    transform: translateY(16px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
+  .contact-val a {
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+    transition: border-color 0.2s;
   }
-  .fade.visible { opacity: 1; transform: none; }
-
-  /* ── IMAGE SHAPE CLASSES ── */
-  .img-square {
-    aspect-ratio: 1 !important;
-  }
-  .img-rectangle {
-    aspect-ratio: 4/3 !important;
+  .contact-val a:hover {
+    border-color: var(--ink);
   }
 
-  @media (max-width: 900px) {
-    nav { padding: 16px 24px; }
-    .hero { grid-template-columns: 0 1fr 0; }
-    .side-label { display: none; }
-    .hero-body { padding: 48px 24px 40px; }
-    .section { grid-template-columns: 0 1fr 0; }
-    .section-content { padding: 48px 24px; border: none; }
-    .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 40px; }
-    .projects-grid, .edu-grid { grid-template-columns: 1fr; }
-    .exp-row { grid-template-columns: 1fr; gap: 6px; }
-    .footer-inner { padding: 20px 24px; border: none; }
+  /* RESPONSIVE */
+  @media (max-width: 1024px) {
+    .about-grid, .contact-grid {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 18px 24px; }
+    .section-content { padding: 48px 24px; }
+    .hero-body { padding: 48px 24px 32px; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .hero-bottom { grid-template-columns: 1fr; }
+    .hero-stat { padding: 20px 0; border-right: none; }
+    .hero-stat:not(:first-child) { padding-left: 0; }
+    .exp-row { grid-template-columns: 1fr; gap: 20px; }
   }
 </style>
 </head>
@@ -626,613 +618,536 @@
 <!-- LOGIN MODAL -->
 <div class="login-modal" id="loginModal">
   <div class="login-box">
-    <div class="login-title">portfolio access</div>
+    <div class="login-title">owner login</div>
     <div class="login-field">
-      <label class="login-label">email</label>
-      <input type="email" class="login-input" id="loginEmail" placeholder="behrencj@mail.uc.edu">
+      <label class="login-label">username</label>
+      <input class="login-input" type="text" id="loginUsername" placeholder=""/>
     </div>
     <div class="login-field">
       <label class="login-label">password</label>
-      <input type="password" class="login-input" id="loginPassword" placeholder="••••••••">
+      <input class="login-input" type="password" id="loginPassword" placeholder=""/>
     </div>
-    <button class="login-btn" id="loginBtn">sign in</button>
+    <button class="login-btn" id="loginBtn">login</button>
     <div class="login-error" id="loginError"></div>
   </div>
 </div>
 
 <!-- NAV -->
 <nav>
-  <a class="nav-name editable" href="#">[carson_behrendt]</a>
+  <a href="#" class="nav-name">carson behrendt</a>
   <div class="nav-links">
     <a href="#about">about</a>
     <a href="#work">work</a>
+    <a href="#skills">skills</a>
     <a href="#experience">experience</a>
-    <a href="#education">education</a>
     <a href="#contact">contact</a>
+    <button class="logout-btn" id="logoutBtn">logout</button>
   </div>
 </nav>
 
+<!-- EDIT BUTTON -->
+<button class="edit-btn" id="editBtn">edit</button>
+
 <main>
 
-  <!-- HERO -->
-  <div class="hero">
-    <div class="side-label"><span class="editable">architecture · design · 2024–</span></div>
-    <div class="hero-body">
-      <div class="hero-top">
-        <p class="hero-index editable">portfolio_v1 / undergraduate / cincinnati</p>
-        <h1 id="heroName">
-          <span class="bracket">[</span>carson<br>behrendt<span class="bracket">]</span>
-        </h1>
+<!-- HERO SECTION -->
+<section class="hero">
+  <div class="side-label"><span>carson behrendt</span></div>
+  <div class="hero-body">
+    <div class="hero-top">
+      <div class="hero-index">01 / introduction</div>
+      <h1><span class="bracket">[</span> designer & <span class="editable" id="heroTitle">developer</span> <span class="bracket">]</span></h1>
+    </div>
+    <div class="hero-bottom">
+      <div class="hero-stat">
+        <span class="stat-val editable" id="heroStat1">3+</span>
+        <span class="stat-key">years experience</span>
       </div>
-      <div class="hero-bottom">
-        <div class="hero-stat">
-          <span class="stat-val editable">3.6</span>
-          <span class="stat-key editable">// gpa_uc</span>
-        </div>
-        <div class="hero-stat">
-          <span class="stat-val editable">3×</span>
-          <span class="stat-key editable">// scholastics_keys</span>
-        </div>
-        <div class="hero-stat">
-          <span class="stat-val editable">B.S.</span>
-          <span class="stat-key editable">// architecture_daap</span>
-        </div>
+      <div class="hero-stat">
+        <span class="stat-val editable" id="heroStat2">20+</span>
+        <span class="stat-key">projects completed</span>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-val editable" id="heroStat3">100%</span>
+        <span class="stat-key">client satisfaction</span>
       </div>
     </div>
-    <div class="side-label right"><span class="editable">uc · daap · class_of_2028</span></div>
   </div>
+  <div class="side-label right"><span>hero section</span></div>
+</section>
 
-  <!-- ABOUT -->
-  <div class="section" id="about">
-    <div class="side-label"><span class="editable">01 / about</span></div>
-    <div class="section-content">
-      <div class="section-head">
-        <span class="section-title editable">// about</span>
-        <span class="section-num">01</span>
-      </div>
-      <div class="about-grid fade">
-        <p class="about-statement editable">architecture student at UC — designing with intention, building with precision, learning at the intersection of space, art, and construction.</p>
-        <div class="about-details">
-          <div class="detail-row">
-            <div class="detail-key editable">// name</div>
-            <div class="detail-val editable">Carson Behrendt</div>
-          </div>
-          <div class="detail-row">
-            <div class="detail-key editable">// location</div>
-            <div class="detail-val editable">812 Beechmeadow Lane<br>Cincinnati, Ohio</div>
-          </div>
-          <div class="detail-row">
-            <div class="detail-key editable">// email</div>
-            <div class="detail-val editable">behrencj@mail.uc.edu</div>
-          </div>
-          <div class="detail-row">
-            <div class="detail-key editable">// phone</div>
-            <div class="detail-val editable">(513) 413-4176</div>
-          </div>
-          <div class="detail-row">
-            <div class="detail-key editable">// portfolio</div>
-            <div class="detail-val editable">Carson_Behrendt</div>
-          </div>
-          <div class="detail-row">
-            <div class="detail-key editable">// status</div>
-            <div class="detail-val editable">honors student · seeking co-op</div>
-          </div>
+<!-- ABOUT SECTION -->
+<section class="section" id="about">
+  <div class="side-label"><span>about</span></div>
+  <div class="section-content">
+    <div class="section-head">
+      <h2 class="section-title">about me</h2>
+      <span class="section-num">02</span>
+    </div>
+    <div class="about-grid">
+      <p class="about-statement editable" id="aboutStatement">I'm a versatile designer and developer passionate about creating beautiful, functional digital experiences.</p>
+      <div class="about-details">
+        <div class="detail-row">
+          <div class="detail-key">LOCATION</div>
+          <div class="detail-val editable" id="aboutLocation">Denver, Colorado</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-key">EMAIL</div>
+          <div class="detail-val editable" id="aboutEmail">hello@carson.design</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-key">EXPERTISE</div>
+          <div class="detail-val editable" id="aboutExpertise">UI/UX Design, Web Development, Branding</div>
         </div>
       </div>
     </div>
-    <div class="side-label right"><span></span></div>
   </div>
+  <div class="side-label right"><span>about me</span></div>
+</section>
 
-  <!-- WORK -->
-  <div class="section" id="work">
-    <div class="side-label"><span class="editable">02 / work</span></div>
-    <div class="section-content">
-      <div class="section-head">
-        <span class="section-title editable">// selected work</span>
-        <span class="section-num">02</span>
-      </div>
-      <div class="projects-grid">
-        <!-- card 1 -->
-        <div class="project-card fade">
-          <div class="project-img" id="project-img-container-1">
-            <img id="project-img-1" src="" alt="project 1" style="display:none;" />
-            <div class="img-placeholder" id="placeholder-1">[ image_01 ]<br>drop your photo here</div>
-            <div class="project-tag"><span>akt.1</span></div>
-          </div>
-          <div class="photo-upload-container" data-project="1">
-            <label class="photo-upload-label">drag & drop or click to upload image</label>
-            <input type="file" class="photo-upload-input" accept="image/*" data-project="1">
-          </div>
-          <div class="photo-shape-controls" data-project="1">
-            <button class="shape-btn active" data-shape="rectangle" data-project="1">rectangle</button>
-            <button class="shape-btn" data-shape="square" data-project="1">square</button>
-          </div>
-          <div class="project-meta">
-            <div class="project-title editable">[project_01]</div>
-            <div class="project-sub editable">architectural design · 2025</div>
-          </div>
-        </div>
-        <!-- card 2 -->
-        <div class="project-card fade">
-          <div class="project-img" id="project-img-container-2">
-            <img id="project-img-2" src="" alt="project 2" style="display:none;" />
-            <div class="img-placeholder" id="placeholder-2">[ image_02 ]<br>drop your photo here</div>
-            <div class="project-tag"><span>akt.2</span></div>
-          </div>
-          <div class="photo-upload-container" data-project="2">
-            <label class="photo-upload-label">drag & drop or click to upload image</label>
-            <input type="file" class="photo-upload-input" accept="image/*" data-project="2">
-          </div>
-          <div class="photo-shape-controls" data-project="2">
-            <button class="shape-btn active" data-shape="rectangle" data-project="2">rectangle</button>
-            <button class="shape-btn" data-shape="square" data-project="2">square</button>
-          </div>
-          <div class="project-meta">
-            <div class="project-title editable">[project_02]</div>
-            <div class="project-sub editable">construction docs · 2026</div>
-          </div>
-        </div>
-        <!-- card 3 -->
-        <div class="project-card fade">
-          <div class="project-img" id="project-img-container-3">
-            <img id="project-img-3" src="" alt="project 3" style="display:none;" />
-            <div class="img-placeholder" id="placeholder-3">[ image_03 ]<br>drop your photo here</div>
-            <div class="project-tag"><span>akt.3</span></div>
-          </div>
-          <div class="photo-upload-container" data-project="3">
-            <label class="photo-upload-label">drag & drop or click to upload image</label>
-            <input type="file" class="photo-upload-input" accept="image/*" data-project="3">
-          </div>
-          <div class="photo-shape-controls" data-project="3">
-            <button class="shape-btn active" data-shape="rectangle" data-project="3">rectangle</button>
-            <button class="shape-btn" data-shape="square" data-project="3">square</button>
-          </div>
-          <div class="project-meta">
-            <div class="project-title editable">[project_03]</div>
-            <div class="project-sub editable">mixed media · 2024</div>
-          </div>
-        </div>
-        <!-- card 4 -->
-        <div class="project-card fade">
-          <div class="project-img" id="project-img-container-4">
-            <img id="project-img-4" src="" alt="project 4" style="display:none;" />
-            <div class="img-placeholder" id="placeholder-4">[ image_04 ]<br>drop your photo here</div>
-            <div class="project-tag"><span>akt.4</span></div>
-          </div>
-          <div class="photo-upload-container" data-project="4">
-            <label class="photo-upload-label">drag & drop or click to upload image</label>
-            <input type="file" class="photo-upload-input" accept="image/*" data-project="4">
-          </div>
-          <div class="photo-shape-controls" data-project="4">
-            <button class="shape-btn active" data-shape="rectangle" data-project="4">rectangle</button>
-            <button class="shape-btn" data-shape="square" data-project="4">square</button>
-          </div>
-          <div class="project-meta">
-            <div class="project-title editable">[project_04]</div>
-            <div class="project-sub editable">sketching · 2D design · 2024</div>
-          </div>
-        </div>
-      </div>
+<!-- WORK SECTION -->
+<section class="section" id="work">
+  <div class="side-label"><span>work</span></div>
+  <div class="section-content">
+    <div class="section-head">
+      <h2 class="section-title">selected projects</h2>
+      <span class="section-num">03</span>
     </div>
-    <div class="side-label right"><span></span></div>
+    <div class="projects-grid" id="projectsContainer">
+      <!-- Projects will be loaded here -->
+    </div>
   </div>
+  <div class="side-label right"><span>selected projects</span></div>
+</section>
 
-  <!-- SKILLS -->
-  <div class="section">
-    <div class="side-label"><span class="editable">03 / skills</span></div>
-    <div class="section-content">
-      <div class="section-head">
-        <span class="section-title editable">// skills &amp; tools</span>
-        <span class="section-num">03</span>
-      </div>
-      <table class="skills-table fade">
-        <tr>
-          <td><span class="editable">// software</span></td>
-          <td>
-            <div class="skill-items editable">
-              <span class="skill-item">Adobe Suite</span>
-              <span class="skill-item">Rhino</span>
-              <span class="skill-item">Revit</span>
-              <span class="skill-item">AutoCad</span>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><span class="editable">// craft</span></td>
-          <td>
-            <div class="skill-items editable">
-              <span class="skill-item">Sketching</span>
-              <span class="skill-item">2D Design</span>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><span class="editable">// approach</span></td>
-          <td>
-            <div class="skill-items editable">
-              <span class="skill-item">Critical Thinking</span>
-              <span class="skill-item">Collaborative</span>
-            </div>
-          </td>
-        </tr>
-      </table>
+<!-- SKILLS SECTION -->
+<section class="section" id="skills">
+  <div class="side-label"><span>skills</span></div>
+  <div class="section-content">
+    <div class="section-head">
+      <h2 class="section-title">core competencies</h2>
+      <span class="section-num">04</span>
     </div>
-    <div class="side-label right"><span></span></div>
+    <table class="skills-table">
+      <tr>
+        <td>design</td>
+        <td>
+          <div class="skill-items">
+            <span class="skill-item editable" id="designSkills">UI/UX • Web Design • Branding • Wireframing</span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>development</td>
+        <td>
+          <div class="skill-items">
+            <span class="skill-item editable" id="devSkills">HTML/CSS • JavaScript • React • TypeScript</span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>tools</td>
+        <td>
+          <div class="skill-items">
+            <span class="skill-item editable" id="toolSkills">Figma • VS Code • Git • Adobe Creative Suite</span>
+          </div>
+        </td>
+      </tr>
+    </table>
   </div>
+  <div class="side-label right"><span>skills</span></div>
+</section>
 
-  <!-- EXPERIENCE -->
-  <div class="section" id="experience">
-    <div class="side-label"><span class="editable">04 / experience</span></div>
-    <div class="section-content">
-      <div class="section-head">
-        <span class="section-title editable">// professional experience</span>
-        <span class="section-num">04</span>
-      </div>
-      <div class="exp-list">
-        <div class="exp-row">
-          <div class="exp-date editable">spring_2026</div>
-          <div>
-            <div class="exp-company editable">Cincinnati United Contractors</div>
-            <div class="exp-role editable">// architecture co-op</div>
-            <ul class="exp-bullets">
-              <li class="editable">developed practical understanding of construction systems and documentation, adapting quickly to a professional environment and contributing to team coordination and project delivery</li>
-              <li class="editable">bridged architectural intent and construction execution by assisting with drawing analysis, on-site coordination, and team communication across active projects</li>
-            </ul>
-          </div>
-        </div>
-        <div class="exp-row">
-          <div class="exp-date editable">oct_2025 → now</div>
-          <div>
-            <div class="exp-company editable">Cooper's Hawk</div>
-            <div class="exp-role editable">// busser / runner</div>
-            <ul class="exp-bullets">
-              <li class="editable">provided efficient support in a high-volume, team-oriented environment, contributing to seamless service while building a close-knit team dynamic</li>
-            </ul>
-          </div>
-        </div>
-        <div class="exp-row">
-          <div class="exp-date editable">jun_2024 → aug_2024</div>
-          <div>
-            <div class="exp-company editable">Cutco Cutlery</div>
-            <div class="exp-role editable">// sales representative</div>
-            <ul class="exp-bullets">
-              <li class="editable">proper etiquette in communications and spreading ideas across a team while serving clients during individual product demonstrations</li>
-              <li class="editable">learned the fundamentals of sales strategy and client engagement</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+<!-- EXPERIENCE SECTION -->
+<section class="section" id="experience">
+  <div class="side-label"><span>experience</span></div>
+  <div class="section-content">
+    <div class="section-head">
+      <h2 class="section-title">professional background</h2>
+      <span class="section-num">05</span>
     </div>
-    <div class="side-label right"><span></span></div>
+    <div class="exp-list" id="experienceContainer">
+      <!-- Experience will be loaded here -->
+    </div>
   </div>
+  <div class="side-label right"><span>experience</span></div>
+</section>
 
-  <!-- EDUCATION -->
-  <div class="section" id="education">
-    <div class="side-label"><span class="editable">05 / education</span></div>
-    <div class="section-content">
-      <div class="section-head">
-        <span class="section-title editable">// education</span>
-        <span class="section-num">05</span>
+<!-- CONTACT SECTION -->
+<section class="section" id="contact">
+  <div class="side-label"><span>contact</span></div>
+  <div class="section-content">
+    <div class="section-head">
+      <h2 class="section-title">get in touch</h2>
+      <span class="section-num">06</span>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-row">
+        <div class="contact-label">EMAIL</div>
+        <div class="contact-val"><a href="mailto:hello@carson.design">hello@carson.design</a></div>
       </div>
-      <div class="edu-grid fade">
-        <div class="edu-card">
-          <div class="edu-school editable">University of Cincinnati</div>
-          <div class="edu-period editable">2024 → 2028</div>
-          <div class="edu-line editable">
-            B.S. Architecture<br>
-            College of Design, Architecture, Art &amp; Planning<br>
-            GPA: 3.6 · Honors Student
-          </div>
-        </div>
-        <div class="edu-card">
-          <div class="edu-school editable">Elder High School</div>
-          <div class="edu-period editable">graduated_2024</div>
-          <div class="edu-line editable">GPA: 3.8 · Honors Graduate</div>
-          <div>
-            <span class="edu-tag editable">[gold_key_2022]</span>
-            <span class="edu-tag editable">[gold_key_2024]</span>
-            <span class="edu-tag editable">[silver_key_2024]</span>
-            <span class="edu-tag editable">[silver_key_2024]</span>
-          </div>
-        </div>
+      <div class="contact-row">
+        <div class="contact-label">SOCIAL</div>
+        <div class="contact-val"><a href="#">twitter</a> • <a href="#">github</a> • <a href="#">linkedin</a></div>
       </div>
     </div>
-    <div class="side-label right"><span></span></div>
   </div>
-
-  <!-- CONTACT -->
-  <div class="section" id="contact">
-    <div class="side-label"><span class="editable">06 / contact</span></div>
-    <div class="section-content">
-      <div class="section-head">
-        <span class="section-title editable">// contact</span>
-        <span class="section-num">06</span>
-      </div>
-      <div class="contact-grid fade">
-        <div>
-          <p class="contact-big editable">let's<br>build.</p>
-          <p class="contact-note editable">whether you're looking for a co-op candidate, a collaborator, or just want to talk architecture — reach out.</p>
-        </div>
-        <div class="contact-links">
-          <a class="contact-link" href="mailto:behrencj@mail.uc.edu">
-            <span class="editable">behrencj@mail.uc.edu</span>
-            <span class="link-arr">↗</span>
-          </a>
-          <a class="contact-link" href="tel:5134134176">
-            <span class="editable">(513) 413-4176</span>
-            <span class="link-arr">↗</span>
-          </a>
-          <a class="contact-link" href="#">
-            <span class="editable">portfolio / Carson_Behrendt</span>
-            <span class="link-arr">↗</span>
-          </a>
-          <a class="contact-link" href="#">
-            <span class="editable">812 Beechmeadow Ln, Cincinnati OH</span>
-            <span class="link-arr">↗</span>
-          </a>
-        </div>
-      </div>
-    </div>
-    <div class="side-label right"><span></span></div>
-  </div>
+  <div class="side-label right"><span>contact</span></div>
+</section>
 
 </main>
 
-<!-- FOOTER -->
-<footer>
-  <div></div>
-  <div class="footer-inner">
-    <span class="editable">© 2026 carson_behrendt</span>
-    <span class="editable">architecture · daap · uc</span>
-    <span class="editable">class_of_2028</span>
-  </div>
-  <div></div>
-</footer>
-
-<button class="edit-btn" id="editBtn">edit mode</button>
-
 <script>
-  // Credentials
-  const VALID_EMAIL = 'behrencj@mail.uc.edu';
-  const VALID_PASSWORD = 'behr$$2020port';
-
-  // Login System
-  const loginModal = document.getElementById('loginModal');
-  const loginBtn = document.getElementById('loginBtn');
-  const loginEmail = document.getElementById('loginEmail');
-  const loginPassword = document.getElementById('loginPassword');
-  const loginError = document.getElementById('loginError');
-
-  loginBtn.addEventListener('click', () => {
-    const email = loginEmail.value.trim();
-    const password = loginPassword.value;
-
-    if (email === VALID_EMAIL && password === VALID_PASSWORD) {
-      localStorage.setItem('portfolio_authenticated', 'true');
-      loginModal.classList.add('hidden');
-      showEditBtn();
-    } else {
-      loginError.textContent = 'Invalid email or password';
-    }
-  });
-
-  // Allow login with Enter key
-  loginPassword.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') loginBtn.click();
-  });
-  loginEmail.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') loginBtn.click();
-  });
-
-  // Check authentication on page load
-  function checkAuthentication() {
-    if (localStorage.getItem('portfolio_authenticated') === 'true') {
-      loginModal.classList.add('hidden');
-      showEditBtn();
+  // ═══════════════════════════════════════════════════════════════════
+  // AUTHENTICATION SYSTEM
+  // ═══════════════════════════════════════════════════════════════════
+  
+  const OWNER_USERNAME = 'cjbehrendt06';
+  const OWNER_PASSWORD = 'portfolio2025'; // Change this to your desired password
+  
+  let isLoggedIn = false;
+  
+  // Check if user is already logged in (from localStorage)
+  function checkLoginStatus() {
+    const token = localStorage.getItem('portfolioToken');
+    if (token === 'owner_authenticated') {
+      isLoggedIn = true;
+      showEditControls();
     }
   }
-
-  function showEditBtn() {
+  
+  function showEditControls() {
     document.getElementById('editBtn').classList.add('show');
+    document.getElementById('logoutBtn').classList.add('show');
+    document.getElementById('loginModal').classList.add('hidden');
   }
+  
+  function hideEditControls() {
+    document.getElementById('editBtn').classList.remove('show');
+    document.getElementById('logoutBtn').classList.remove('show');
+  }
+  
+  // Login button handler
+  document.getElementById('loginBtn').addEventListener('click', function() {
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const errorEl = document.getElementById('loginError');
+    
+    if (username === OWNER_USERNAME && password === OWNER_PASSWORD) {
+      isLoggedIn = true;
+      localStorage.setItem('portfolioToken', 'owner_authenticated');
+      errorEl.textContent = '';
+      showEditControls();
+    } else {
+      errorEl.textContent = 'invalid credentials';
+      document.getElementById('loginPassword').value = '';
+    }
+  });
+  
+  // Logout button handler
+  document.getElementById('logoutBtn').addEventListener('click', function() {
+    isLoggedIn = false;
+    localStorage.removeItem('portfolioToken');
+    document.getElementById('editBtn').classList.remove('active');
+    document.body.classList.remove('edit-mode');
+    hideEditControls();
+  });
+  
+  // Allow Enter key to submit login
+  document.getElementById('loginPassword').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      document.getElementById('loginBtn').click();
+    }
+  });
 
-  checkAuthentication();
-
-  // Edit Mode Toggle
+  // ═══════════════════════════════════════════════════════════════════
+  // EDIT MODE SYSTEM
+  // ═══════════════════════════════════════════════════════════════════
+  
   const editBtn = document.getElementById('editBtn');
-  const editables = document.querySelectorAll('.editable');
-  const photoContainers = document.querySelectorAll('.photo-upload-container');
-  const photoInputs = document.querySelectorAll('.photo-upload-input');
-  const shapeButtons = document.querySelectorAll('.shape-btn');
-  let isEditMode = false;
-
-  editBtn.addEventListener('click', () => {
-    isEditMode = !isEditMode;
-    document.body.classList.toggle('edit-mode');
+  const editableElements = document.querySelectorAll('.editable');
+  
+  editBtn.addEventListener('click', function() {
+    if (!isLoggedIn) {
+      document.getElementById('loginModal').classList.remove('hidden');
+      return;
+    }
+    
     editBtn.classList.toggle('active');
-    editBtn.textContent = isEditMode ? 'save & exit' : 'edit mode';
-
-    if (isEditMode) {
-      editables.forEach(el => {
-        el.contentEditable = 'true';
-        el.addEventListener('blur', saveData);
-      });
+    document.body.classList.toggle('edit-mode');
+    
+    if (document.body.classList.contains('edit-mode')) {
+      enableEditMode();
     } else {
-      editables.forEach(el => {
-        el.contentEditable = 'false';
-        el.removeEventListener('blur', saveData);
-      });
-      saveToLocalStorage();
+      disableEditMode();
     }
   });
-
-  // Photo Upload Handlers
-  photoContainers.forEach(container => {
-    const input = container.querySelector('.photo-upload-input');
-
-    // Click to upload
-    container.addEventListener('click', () => input.click());
-
-    // File input change
-    input.addEventListener('change', handleFileUpload);
-
-    // Drag and drop
-    container.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      container.classList.add('dragover');
-    });
-
-    container.addEventListener('dragleave', () => {
-      container.classList.remove('dragover');
-    });
-
-    container.addEventListener('drop', (e) => {
-      e.preventDefault();
-      container.classList.remove('dragover');
-      const files = e.dataTransfer.files;
-      if (files.length > 0) {
-        input.files = files;
-        handleFileUpload({ target: input });
-      }
-    });
-  });
-
-  function handleFileUpload(e) {
-    const input = e.target;
-    const projectNum = input.getAttribute('data-project');
-    const file = input.files[0];
-
-    if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const imgData = event.target.result;
-        const img = document.getElementById(`project-img-${projectNum}`);
-        const placeholder = document.getElementById(`placeholder-${projectNum}`);
-
-        img.src = imgData;
-        img.style.display = 'block';
-        placeholder.style.display = 'none';
-
-        localStorage.setItem(`portfolio_image_${projectNum}`, imgData);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      alert('Please upload a valid image file.');
-    }
-  }
-
-  // Shape Controls
-  shapeButtons.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const projectNum = e.target.getAttribute('data-project');
-      const shape = e.target.getAttribute('data-shape');
-      const controlsContainer = document.querySelector(`.photo-shape-controls[data-project="${projectNum}"]`);
-      const imgContainer = document.getElementById(`project-img-container-${projectNum}`);
-
-      // Remove all active classes
-      controlsContainer.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('active'));
-      
-      // Add active class to clicked button
-      e.target.classList.add('active');
-
-      // Update image shape
-      imgContainer.classList.remove('img-square', 'img-rectangle');
-      if (shape === 'square') {
-        imgContainer.classList.add('img-square');
-      } else {
-        imgContainer.classList.add('img-rectangle');
-      }
-
-      // Save preference
-      localStorage.setItem(`portfolio_shape_${projectNum}`, shape);
-    });
-  });
-
-  // Save to LocalStorage
-  function saveData(e) {
-    const id = e.target.getAttribute('data-id') || e.target.textContent;
-    localStorage.setItem(`portfolio_${id}`, e.target.innerHTML);
-  }
-
-  function saveToLocalStorage() {
-    editables.forEach((el, i) => {
-      localStorage.setItem(`portfolio_${i}`, el.innerHTML);
+  
+  function enableEditMode() {
+    editableElements.forEach(el => {
+      el.contentEditable = 'true';
+      el.addEventListener('blur', saveContent);
     });
   }
-
-  // Load from LocalStorage on Page Load
-  function loadFromLocalStorage() {
-    editables.forEach((el, i) => {
-      const saved = localStorage.getItem(`portfolio_${i}`);
+  
+  function disableEditMode() {
+    editableElements.forEach(el => {
+      el.contentEditable = 'false';
+      el.removeEventListener('blur', saveContent);
+    });
+  }
+  
+  function saveContent(e) {
+    const id = e.target.id;
+    const content = e.target.textContent;
+    localStorage.setItem(`content_${id}`, content);
+  }
+  
+  function loadSavedContent() {
+    editableElements.forEach(el => {
+      const saved = localStorage.getItem(`content_${el.id}`);
       if (saved) {
-        el.innerHTML = saved;
+        el.textContent = saved;
       }
     });
-
-    // Load project images and shapes
-    for (let i = 1; i <= 4; i++) {
-      const savedImgData = localStorage.getItem(`portfolio_image_${i}`);
-      if (savedImgData) {
-        const img = document.getElementById(`project-img-${i}`);
-        const placeholder = document.getElementById(`placeholder-${i}`);
-
-        img.src = savedImgData;
-        img.style.display = 'block';
-        placeholder.style.display = 'none';
-      }
-
-      // Load saved shape
-      const savedShape = localStorage.getItem(`portfolio_shape_${i}`) || 'rectangle';
-      const imgContainer = document.getElementById(`project-img-container-${i}`);
-      const controlsContainer = document.querySelector(`.photo-shape-controls[data-project="${i}"]`);
-      
-      imgContainer.classList.remove('img-square', 'img-rectangle');
-      controlsContainer.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('active'));
-      
-      if (savedShape === 'square') {
-        imgContainer.classList.add('img-square');
-        controlsContainer.querySelector('[data-shape="square"]').classList.add('active');
-      } else {
-        imgContainer.classList.add('img-rectangle');
-        controlsContainer.querySelector('[data-shape="rectangle"]').classList.add('active');
-      }
-    }
   }
 
-  loadFromLocalStorage();
-
-  // Scroll observer
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach((e, i) => {
-      if (e.isIntersecting) {
-        setTimeout(() => e.target.classList.add('visible'), i * 90);
+  // ═══════════════════════════════════════════════════════════════════
+  // PHOTO UPLOAD & SIZING SYSTEM
+  // ═══════════════════════════════════════════════════════════════════
+  
+  let currentPhotoSize = 100; // percentage
+  
+  function initializePhotoUpload(photoElement) {
+    if (!photoElement) return;
+    
+    const container = photoElement.closest('.project-card');
+    if (!container) return;
+    
+    // Create upload dropzone
+    const uploadContainer = document.createElement('div');
+    uploadContainer.className = 'photo-upload-container';
+    uploadContainer.innerHTML = `
+      <label class="photo-upload-label">drag or click to upload photo</label>
+      <input type="file" class="photo-upload-input" accept="image/*"/>
+    `;
+    
+    const sizeControls = document.createElement('div');
+    sizeControls.className = 'photo-size-controls';
+    sizeControls.innerHTML = `
+      <span class="size-label">photo size:</span>
+      <input type="range" class="size-slider" min="50" max="150" value="100"/>
+      <span class="size-value" id="sizeValue">100%</span>
+    `;
+    
+    const shapeControls = document.createElement('div');
+    shapeControls.className = 'photo-shape-controls';
+    shapeControls.innerHTML = `
+      <button class="shape-btn active" data-shape="rectangle">rectangle</button>
+      <button class="shape-btn" data-shape="circle">circle</button>
+      <button class="shape-btn" data-shape="square">square</button>
+    `;
+    
+    photoElement.parentElement.insertAdjacentElement('afterend', uploadContainer);
+    uploadContainer.insertAdjacentElement('afterend', sizeControls);
+    sizeControls.insertAdjacentElement('afterend', shapeControls);
+    
+    // Photo size slider
+    const sizeSlider = sizeControls.querySelector('.size-slider');
+    const sizeValue = sizeControls.querySelector('.size-value');
+    
+    sizeSlider.addEventListener('input', function() {
+      currentPhotoSize = this.value;
+      sizeValue.textContent = currentPhotoSize + '%';
+      if (photoElement.querySelector('img')) {
+        photoElement.querySelector('img').style.width = currentPhotoSize + '%';
+        photoElement.querySelector('img').style.height = currentPhotoSize + '%';
+        photoElement.querySelector('img').style.objectFit = 'contain';
+      }
+      localStorage.setItem(`photoSize_${container.id}`, currentPhotoSize);
+    });
+    
+    // Shape buttons
+    shapeControls.querySelectorAll('.shape-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        shapeControls.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        const shape = this.dataset.shape;
+        applyPhotoShape(photoElement, shape);
+        localStorage.setItem(`photoShape_${container.id}`, shape);
+      });
+    });
+    
+    // File upload
+    const fileInput = uploadContainer.querySelector('.photo-upload-input');
+    uploadContainer.addEventListener('click', () => fileInput.click());
+    
+    fileInput.addEventListener('change', function(e) {
+      handlePhotoUpload(e, photoElement, container.id);
+    });
+    
+    // Drag and drop
+    uploadContainer.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadContainer.classList.add('dragover');
+    });
+    
+    uploadContainer.addEventListener('dragleave', () => {
+      uploadContainer.classList.remove('dragover');
+    });
+    
+    uploadContainer.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadContainer.classList.remove('dragover');
+      if (e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        const event = new Event('change', { bubbles: true });
+        fileInput.dispatchEvent(event);
       }
     });
-  }, { threshold: 0.1 });
-
-  document.querySelectorAll('.fade, .exp-row').forEach(el => observer.observe(el));
-
-  // Typing effect on hero name
-  const name = document.getElementById('heroName');
-  const full = name.innerHTML;
-  name.innerHTML = '<span class="bracket">[</span><span class="typing"></span>';
-  const typed = name.querySelector('.typing');
-  const text = 'carson\nbehrendt]';
-  let i = 0;
-  function type() {
-    if (i < text.length) {
-      if (text[i] === '\n') {
-        typed.innerHTML += '<br>';
-      } else {
-        typed.innerHTML += text[i];
-      }
-      i++;
-      setTimeout(type, i < 7 ? 80 : 60);
+    
+    // Load saved size and shape
+    const savedSize = localStorage.getItem(`photoSize_${container.id}`);
+    const savedShape = localStorage.getItem(`photoShape_${container.id}`);
+    
+    if (savedSize) {
+      sizeSlider.value = savedSize;
+      sizeValue.textContent = savedSize + '%';
+    }
+    
+    if (savedShape) {
+      shapeControls.querySelectorAll('.shape-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.shape === savedShape) btn.classList.add('active');
+      });
+      applyPhotoShape(photoElement, savedShape);
+    }
+  }
+  
+  function handlePhotoUpload(e, photoElement, containerId) {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const img = photoElement.querySelector('img') || document.createElement('img');
+      img.src = event.target.result;
+      img.style.width = currentPhotoSize + '%';
+      img.style.height = currentPhotoSize + '%';
+      img.style.objectFit = 'contain';
+      
+      photoElement.innerHTML = '';
+      photoElement.appendChild(img);
+      
+      // Save to localStorage
+      localStorage.setItem(`photo_${containerId}`, event.target.result);
+    };
+    reader.readAsDataURL(file);
+  }
+  
+  function applyPhotoShape(photoElement, shape) {
+    photoElement.style.borderRadius = '0';
+    const img = photoElement.querySelector('img');
+    
+    if (shape === 'circle') {
+      photoElement.style.borderRadius = '50%';
+      photoElement.style.width = '200px';
+      photoElement.style.height = '200px';
+      photoElement.style.overflow = 'hidden';
+    } else if (shape === 'square') {
+      photoElement.style.borderRadius = '0';
+      photoElement.style.width = '200px';
+      photoElement.style.height = '200px';
     } else {
-      typed.classList.remove('typing');
+      photoElement.style.borderRadius = '0';
+      photoElement.style.width = '100%';
+      photoElement.style.height = 'auto';
+      photoElement.style.aspectRatio = '4/3';
     }
   }
-  setTimeout(type, 400);
+
+  // ═══════════════════════════════════════════════════════════════════
+  // PROJECTS & EXPERIENCE DATA
+  // ═══════════════════════════════════════════════════════════════════
+  
+  const projects = [
+    { title: 'E-Commerce Platform', subtitle: 'UI/UX Design & Frontend', tag: 'design' },
+    { title: 'Mobile App', subtitle: 'React Native Development', tag: 'dev' },
+    { title: 'Brand Identity', subtitle: 'Logo & Guidelines', tag: 'branding' },
+    { title: 'Dashboard', subtitle: 'Data Visualization', tag: 'fullstack' }
+  ];
+  
+  const experience = [
+    {
+      date: '2022 - Present',
+      company: 'Tech Studio',
+      role: 'Senior Designer & Developer',
+      bullets: ['Led design system implementation', 'Mentored junior developers', 'Increased performance by 40%']
+    },
+    {
+      date: '2021 - 2022',
+      company: 'Design Agency',
+      role: 'UI/UX Designer',
+      bullets: ['Designed 15+ client projects', 'Collaborated with development team', 'Improved user engagement by 25%']
+    }
+  ];
+  
+  function loadProjects() {
+    const container = document.getElementById('projectsContainer');
+    projects.forEach((project, index) => {
+      const card = document.createElement('div');
+      card.className = 'project-card';
+      card.id = `project_${index}`;
+      card.innerHTML = `
+        <div class="project-img" id="projectImg_${index}">
+          <div class="img-placeholder">add photo</div>
+        </div>
+        <div class="project-meta">
+          <div class="project-title editable" id="projectTitle_${index}">${project.title}</div>
+          <div class="project-sub editable" id="projectSub_${index}">${project.subtitle}</div>
+        </div>
+        <div class="project-tag"><span>${project.tag}</span></div>
+      `;
+      container.appendChild(card);
+      
+      // Initialize photo upload for each project
+      initializePhotoUpload(document.getElementById(`projectImg_${index}`));
+    });
+    loadSavedContent();
+  }
+  
+  function loadExperience() {
+    const container = document.getElementById('experienceContainer');
+    experience.forEach((exp, index) => {
+      const row = document.createElement('div');
+      row.className = 'exp-row';
+      row.innerHTML = `
+        <div class="exp-date">${exp.date}</div>
+        <div>
+          <div class="exp-company editable" id="expCompany_${index}">${exp.company}</div>
+          <div class="exp-role editable" id="expRole_${index}">${exp.role}</div>
+          <ul class="exp-bullets">
+            ${exp.bullets.map((bullet, i) => `<li class="editable" id="expBullet_${index}_${i}">${bullet}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+      container.appendChild(row);
+      
+      setTimeout(() => row.classList.add('visible'), index * 100);
+    });
+    loadSavedContent();
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // INITIALIZATION
+  // ═══════════════════════════════════════════════════════════════════
+  
+  checkLoginStatus();
+  loadProjects();
+  loadExperience();
+  loadSavedContent();
 </script>
+
 </body>
 </html>
